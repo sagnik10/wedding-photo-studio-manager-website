@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="max-w-7xl mx-auto py-20 px-6">
+
+<h2 class="text-4xl text-center mb-12">{{ gallery.title }}</h2>
+
+<div class="grid md:grid-cols-4 gap-4">
+
+{% for photo in photos %}
+
+<div class="relative group">
+
+<img src="{{ photo.image.url }}" class="w-full h-64 object-cover">
+
+<div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition">
+
+<p class="text-white text-sm px-4 text-center">
+{{ photo.caption }}
+</p>
+
+</div>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+</div>
+
+{% endblock %}

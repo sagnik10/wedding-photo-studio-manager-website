@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+.checkout-wrapper{
+  max-width:700px;
+  margin:100px auto;
+  padding:0 20px;
+}
+
+.checkout-box{
+  padding:40px 20px;
+  text-align:left;
+}
+
+.checkout-title{
+  font-size:22px;
+  margin-bottom:20px;
+  font-weight:500;
+  text-align:center;
+}
+
+.item{
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:10px;
+  font-size:15px;
+}
+
+.total{
+  margin-top:30px;
+  font-size:18px;
+  font-weight:500;
+  text-align:right;
+}
+
+.btn{
+  display:block;
+  margin-top:30px;
+  padding:14px 32px;
+  border:none;
+  cursor:pointer;
+  font-size:13px;
+  letter-spacing:2px;
+  background:#c6bdbd;
+  color:#000;
+  transition:0.2s;
+  width:100%;
+  text-align:center;
+}
+
+.btn:hover{
+  background:#111;
+  color:#fff;
+}
+</style>
+
+<div class="checkout-wrapper">
+
+  <div class="checkout-box">
+
+    <div class="checkout-title">Checkout</div>
+
+    {% for item in items %}
+    <div class="item">
+      <span>{{ item.product.name }} × {{ item.quantity }}</span>
+      <span>£{{ item.total_price }}</span>
+    </div>
+    {% endfor %}
+
+    <div class="total">
+      Total: £{{ total }}
+    </div>
+
+    <form method="POST">
+      {% csrf_token %}
+      <button class="btn">PLACE ORDER</button>
+    </form>
+
+  </div>
+
+</div>
+
+{% endblock %}

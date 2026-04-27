@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+.success-wrapper{
+  max-width:700px;
+  margin:100px auto;
+  padding:0 20px;
+  text-align:center;
+}
+
+.success-title{
+  font-size:28px;
+  margin-bottom:10px;
+}
+
+.success-sub{
+  color:#666;
+  margin-bottom:30px;
+}
+
+.order-box{
+  text-align:left;
+  margin-top:30px;
+  border-top:1px solid #eee;
+  padding-top:20px;
+}
+
+.item{
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:8px;
+  font-size:15px;
+}
+
+.total{
+  margin-top:20px;
+  font-weight:500;
+  text-align:right;
+}
+
+.btn{
+  display:inline-block;
+  margin-top:25px;
+  padding:14px 28px;
+  text-decoration:none;
+  font-size:13px;
+  letter-spacing:2px;
+}
+
+.btn-whatsapp{
+  background:#25D366;
+  color:#fff;
+}
+
+.btn-whatsapp:hover{
+  background:#1ebe5d;
+}
+
+.btn-secondary{
+  background:#111;
+  color:#fff;
+}
+
+.btn-secondary:hover{
+  background:#000;
+}
+</style>
+
+<div class="success-wrapper">
+
+<h1 class="success-title">Order Successful</h1>
+<p class="success-sub">Your order has been placed successfully.</p>
+
+<div class="order-box">
+
+{% for item in items %}
+<div class="item">
+  <span>{{ item.product.name }} × {{ item.quantity }}</span>
+  <span>£{{ item.total_price }}</span>
+</div>
+{% endfor %}
+
+<div class="total">
+  Total: £{{ order.total }}
+</div>
+
+</div>
+
+<a href="{{ whatsapp_link }}" target="_blank" class="btn btn-whatsapp">
+  Confirm on WhatsApp
+</a>
+
+<br>
+
+<a href="{% url 'core:store' %}" class="btn btn-secondary">
+  Continue Shopping
+</a>
+
+</div>
+
+{% endblock %}

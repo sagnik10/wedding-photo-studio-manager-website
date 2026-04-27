@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="max-w-6xl mx-auto py-16 px-6">
+
+<h2 class="text-3xl mb-10 text-center">SEO Dashboard</h2>
+
+<table class="w-full border">
+
+<tr class="bg-gray-200">
+<th class="p-2">Page</th>
+<th class="p-2">Title</th>
+<th class="p-2">Description</th>
+</tr>
+
+{% for s in data %}
+<tr>
+<td class="p-2">{{ s.page_slug }}</td>
+<td class="p-2">{{ s.title }}</td>
+<td class="p-2">{{ s.description }}</td>
+</tr>
+{% endfor %}
+
+</table>
+
+</div>
+
+{% endblock %}

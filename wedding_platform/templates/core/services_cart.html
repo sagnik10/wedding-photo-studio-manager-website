@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="section">
+<h2 style="text-align:center;margin-bottom:40px">booked services</h2>
+
+{% if items %}
+<div style="max-width:900px;margin:auto">
+  <div style="display:flex;flex-direction:column;gap:20px">
+    {% for item in items %}
+    <div style="display:flex;align-items:center;gap:20px;padding:15px;border-bottom:1px solid #eee">
+      <div style="width:100px;height:100px;background:#f5f0ff;display:flex;align-items:center;justify-content:center;">
+        <i class="fas fa-camera" style="font-size:30px;color:#6a3d8f;"></i>
+      </div>
+      <div style="flex:1;text-align:left">
+        <h3 style="margin:0">{{ item.product.name }}</h3>
+        <p style="margin:5px 0;color:#777;">{{ item.product.description }}</p>
+        <p style="margin:5px 0">£{{ item.product.price }}</p>
+      </div>
+      <div>
+        <a href="{% url 'core:remove_item' item.id %}" style="color:red;font-size:13px">Remove</a>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div style="display:flex;justify-content:flex-end;align-items:center;margin-top:30px">
+    <h3>Total: £{{ total }}</h3>
+  </div>
+
+  <div style="text-align:right;margin-top:20px">
+    <a href="{% url 'core:checkout' %}" style="background:#6a3d8f;color:#fff;padding:14px 30px;text-decoration:none">
+      Proceed to Checkout
+    </a>
+  </div>
+</div>
+
+{% else %}
+<p style="text-align:center">No services booked yet. <a href="{% url 'core:packages' %}">Browse Packages</a></p>
+{% endif %}
+
+</div>
+{% endblock %}

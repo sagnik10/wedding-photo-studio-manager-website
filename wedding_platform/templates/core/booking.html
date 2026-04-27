@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+html, body {
+  height: 100%;
+  margin: 0;
+}
+.page-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+.booking-wrapper{
+  flex: 1;
+  max-width:1000px;
+  margin:40px auto;
+  padding:0 20px;
+  display:flex;
+  gap:60px;
+  align-items:flex-start;
+  justify-content: space-between;
+}
+.calendar-side{flex:1;}
+.info-side{width:320px;}
+.cal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
+.cal-header h3{font-size:18px;font-weight:400;}
+.cal-nav{background:none;border:none;font-size:20px;cursor:pointer;color:#444;}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;text-align:center;}
+.cal-grid .day-label{font-weight:600;font-size:13px;padding:8px 0;}
+.cal-grid .day{padding:10px 0;font-size:14px;cursor:pointer;border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;margin:auto;}
+.cal-grid .day:hover{background:#f0f0f0;}
+.cal-grid .day.active-date{background:#000;color:#fff;border-radius:50%;}
+.cal-grid .day.today{border:1px solid #000;border-radius:50%;}
+.cal-grid .day.empty{cursor:default;}
+.timezone{font-size:13px;color:#777;margin-top:15px;margin-bottom:25px;}
+.time-section h4{font-size:15px;margin-bottom:12px;}
+.time-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;}
+.slot{padding:12px;border:1px solid #ddd;text-align:center;font-size:14px;cursor:pointer;}
+.slot:hover{background:#f5f5f5;}
+.slot.active-slot{background:#000;color:#fff;border-color:#000;}
+.info-side h2{font-size:22px;margin-bottom:8px;}
+.info-side .meta{font-size:14px;color:#777;margin-bottom:15px;}
+.info-side .desc{font-size:15px;color:#444;line-height:1.6;margin-bottom:20px;}
+.address-input{width:100%;padding:12px;border:1px solid #ddd;font-size:14px;margin-bottom:15px;box-sizing:border-box;}
+.book-btn{background:#ddd;padding:12px 28px;border:none;font-size:13px;letter-spacing:2px;cursor:pointer;transition:0.2s;}
+.book-btn:hover{background:#111;color:#fff;}
+.share-row{display:flex;align-items:center;gap:10px;margin-top:20px;font-size:14px;}
+.share-row a{text-decoration:none;color:#000;font-size:20px;}
+@media (max-width: 900px) {
+  .booking-wrapper {
+    flex-direction: column;
+  }
+  .info-side {
+    width: 100%;
+  }
+}
+</style>
+
+<div class="page-container">
+<div class="booking-wrapper">
+
+  <div class="calendar-side">
+    <div class="cal-header">
+      <button class="cal-nav" onclick="prevMonth()">&#8249;</button>
+      <h3 id="calTitle">April 2026</h3>
+      <button class="cal-nav" onclick="nextMonth()">&#8250;</button>
+    </div>
+
+    <div class="cal-grid" id="calGrid">
+      <div class="day-label">Su</div>
+      <div class="day-label">Mo</div>
+      <div class="day-label">Tu</div>
+      <div class="day-label">We</div>
+      <div class="day-label">Th</div>
+      <div class="day-label">Fr</div>
+      <div class="day-label">Sa</div>
+    </div>
+
+    <div class="timezone">(GMT+01:00) Edinburgh, London</div>
+
+    <div class="time-section">
+      <div style="display:flex;gap:40px;">
+        <div>
+          <h4>Morning</h4>
+          <div class="time-grid">
+            <div class="slot" onclick="selectSlot(this)">11:00 AM</div>
+            <div class="slot" onclick="selectSlot(this)">11:30 AM</div>
+          </div>
+        </div>
+        <div>
+          <h4>Afternoon</h4>
+          <div class="time-grid">
+            <div class="slot" onclick="selectSlot(this)">12:00 PM</div>
+            <div class="slot" onclick="selectSlot(this)">12:30 PM</div>
+            <div class="slot" onclick="selectSlot(this)">1:00 PM</div>
+            <div class="slot" onclick="selectSlot(this)">1:30 PM</div>
+            <div class="slot" onclick="selectSlot(this)">2:00 PM</div>
+            <div class="slot" onclick="selectSlot(this)">2:30 PM</div>
+            <div class="slot" onclick="selectSlot(this)">3:00 PM</div>
+            <div class="slot" onclick="selectSlot(this)">3:30 PM</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-side">
+    <h2>{{ pkg.title }}</h2>
+    <div class="meta">{{ pkg.meta }}</div>
+    <div class="desc">{{ pkg.desc }}</div>
+
+    <form method="POST">
+      {% csrf_token %}
+      <input type="hidden" name="date" id="dateInput">
+      <input type="hidden" name="time" id="timeInput">
+      <input class="address-input" name="address" placeholder="Full Address" required>
+      <button class="book-btn" type="submit">BOOK</button>
+    </form>
+  </div>
+
+</div>
+</div>
+
+<script>
+const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+let currentMonth = 3;
+let currentYear = 2026;
+const today = new Date();
+
+function renderCalendar() {
+  const title = document.getElementById("calTitle");
+  const grid = document.getElementById("calGrid");
+  title.textContent = months[currentMonth] + " " + currentYear;
+
+  grid.innerHTML = "";
+  ["Su","Mo","Tu","We","Th","Fr","Sa"].forEach(d => {
+    const el = document.createElement("div");
+    el.className = "day-label";
+    el.textContent = d;
+    grid.appendChild(el);
+  });
+
+  const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+
+  for (let i = 0; i < firstDay; i++) {
+    const el = document.createElement("div");
+    el.className = "day empty";
+    grid.appendChild(el);
+  }
+
+  for (let d = 1; d <= daysInMonth; d++) {
+    const el = document.createElement("div");
+    el.className = "day";
+    el.textContent = d;
+    if (d === today.getDate() && currentMonth === today.getMonth() && currentYear === today.getFullYear()) {
+      el.classList.add("today");
+    }
+    el.onclick = function() { selectDate(this); };
+    grid.appendChild(el);
+  }
+}
+
+function prevMonth() {
+  currentMonth--;
+  if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+  renderCalendar();
+}
+
+function nextMonth() {
+  currentMonth++;
+  if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+  renderCalendar();
+}
+
+function selectDate(el) {
+  document.querySelectorAll(".day").forEach(d => d.classList.remove("active-date"));
+  el.classList.add("active-date");
+  document.getElementById("dateInput").value = el.textContent + " " + months[currentMonth] + " " + currentYear;
+}
+
+function selectSlot(el) {
+  document.querySelectorAll(".slot").forEach(s => s.classList.remove("active-slot"));
+  el.classList.add("active-slot");
+  document.getElementById("timeInput").value = el.textContent;
+}
+
+renderCalendar();
+</script>
+
+{% endblock %}

@@ -1,0 +1,210 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+.packages-wrapper{max-width:900px;margin:0 auto;}
+.package{display:flex;justify-content:space-between;align-items:flex-start;padding:25px 0;border-bottom:1px solid #eee;}
+.package-left{max-width:70%;text-align:left;}
+.package-left h3{margin:0 0 8px 0;font-size:22px;}
+.package-meta{font-size:14px;color:#777;margin-bottom:10px;}
+.package-desc{font-size:15px;line-height:1.6;color:#444;}
+.package-right{display:flex;align-items:center;}
+.book-btn{background:#ddd;padding:12px 28px;text-decoration:none;letter-spacing:2px;font-size:13px;color:#000;transition:0.2s;}
+.book-btn:hover{background:#111;color:#fff;}
+.more-btn{background:none;border:none;cursor:pointer;font-size:14px;margin-top:8px;padding:0;color:#444;}
+.extra-desc{display:none;margin-top:8px;font-size:15px;color:#444;line-height:1.6;}
+</style>
+
+<div class="section">
+<h2>Photography Packages & Prices</h2>
+<div class="packages-wrapper">
+
+  <div class="package">
+    <div class="package-left">
+      <h3>Premium Wedding Photography Package</h3>
+      <div class="package-meta">2 hrs | £399</div>
+      <div class="package-desc">This is a Premium Wedding Photography Package most suitable for small Weddings i.e Registry coverage, Wedding Reception Package includes 100 Professi...
+        <span class="extra-desc"> 100 Professionally developed Photos of the event. Coverage upto 2 hrs for max 100 guests. Delivery time from 12-16 weeks.</span>
+      </div>
+      <button class="more-btn" onclick="toggle(this)">+ More</button>
+    </div>
+    <div class="package-right">
+      <a href="{% url 'core:booking' 'premium-wedding' %}" class="book-btn">BOOK</a>
+    </div>
+  </div>
+
+  <div class="package">
+    <div class="package-left">
+      <h3>Premium Plus Wedding Photography Package</h3>
+      <div class="package-meta">4 hrs | £599</div>
+      <div class="package-desc">This is a Premium Plus Wedding Photography Package most suitable for small weddings i.e Registry coverage, Wedding Reception Package includes 200-2...
+        <span class="extra-desc"> 200-250 Professionally developed Photos of the event. Coverage upto 4 hrs for max 200 guests. Delivery time from 12-16 weeks.</span>
+      </div>
+      <button class="more-btn" onclick="toggle(this)">+ More</button>
+    </div>
+    <div class="package-right">
+      <a href="{% url 'core:booking' 'premium-plus' %}" class="book-btn">BOOK</a>
+    </div>
+  </div>
+
+  <div class="package">
+    <div class="package-left">
+      <h3>Premium VIP Wedding Photography Package</h3>
+      <div class="package-meta">6 hrs | £699</div>
+      <div class="package-desc">This is a Premium VIP Wedding Photography Package most suitable for small weddings i.e Registry coverage, Wedding Reception Package includes 300-35...
+        <span class="extra-desc"> 300-350 Professionally developed Photos of the event. Coverage upto 6 hrs for max 300 guests. Delivery time from 12-16 weeks.</span>
+      </div>
+      <button class="more-btn" onclick="toggle(this)">+ More</button>
+    </div>
+    <div class="package-right">
+      <a href="{% url 'core:booking' 'premium-vip' %}" class="book-btn">BOOK</a>
+    </div>
+  </div>
+
+  <div class="package">
+    <div class="package-left">
+      <h3>Wedding Cinematography</h3>
+      <div class="package-meta">4 hrs | £699</div>
+      <div class="package-desc">We can also offer professional wedding videography and Cinematography service at your event or anywhere you like us to film. this package includes 30...
+        <span class="extra-desc"> 30 minutes professionally edited wedding film delivered via online link or USB.</span>
+      </div>
+      <button class="more-btn" onclick="toggle(this)">+ More</button>
+    </div>
+    <div class="package-right">
+      <a href="{% url 'core:booking' 'wedding-cinematography' %}" class="book-btn">BOOK</a>
+    </div>
+  </div>
+
+  <div class="package">
+    <div class="package-left">
+      <h3>International Weddings</h3>
+      <div class="package-meta">12 hrs | £950</div>
+      <div class="package-desc">As a professional photographer, Our team travel around the globe and can offer international Wedding Coverage at a very affordable price. Please feel f...
+        <span class="extra-desc"> free to contact us for more details on international wedding packages and travel arrangements.</span>
+      </div>
+      <button class="more-btn" onclick="toggle(this)">+ More</button>
+    </div>
+    <div class="package-right">
+      <a href="{% url 'core:booking' 'international-weddings' %}" class="book-btn">BOOK</a>
+    </div>
+  </div>
+
+  <div class="package">
+    <div class="package-left">
+      <h3>Professional Model Photoshoot</h3>
+      <div class="package-meta">1 hr | £250</div>
+      <div class="package-desc">Want to be a Professional Model? Looking for paid modelling jobs? We can help and offer Professional photoshoot in studio. built your professional p...
+        <span class="extra-desc"> portfolio with high quality studio shots suitable for modelling agencies.</span>
+      </div>
+      <button class="more-btn" onclick="toggle(this)">+ More</button>
+    </div>
+    <div class="package-right">
+      <a href="{% url 'core:booking' 'model-photoshoot' %}" class="book-btn">BOOK</a>
+    </div>
+  </div>
+
+  <div class="package">
+    <div class="package-left">
+      <h3>Professional Family Portraits</h3>
+      <div class="package-meta">1 hr | £375</div>
+      <div class="package-desc">Price includes professional Portraits. Studio portrait photographers charge very high price. We can offer you a family portrait Photographer in Manche...
+        <span class="extra-desc"> Manchester at an affordable price with high quality results.</span>
+      </div>
+      <button class="more-btn" onclick="toggle(this)">+ More</button>
+    </div>
+    <div class="package-right">
+      <a href="{% url 'core:booking' 'family-portraits' %}" class="book-btn">BOOK</a>
+    </div>
+  </div>
+
+  <div class="package">
+    <div class="package-left">
+      <h3>Corporate Headshots | Group and Solo</h3>
+      <div class="package-meta">2 hrs | £375</div>
+      <div class="package-desc">Price includes upto 12 staff members for each member headshots can be provided. As a corporate Headshot Photographer, this package can cover up to 12...
+        <span class="extra-desc"> 12 staff members with individual and group shots included.</span>
+      </div>
+      <button class="more-btn" onclick="toggle(this)">+ More</button>
+    </div>
+    <div class="package-right">
+      <a href="{% url 'core:booking' 'corporate-headshots' %}" class="book-btn">BOOK</a>
+    </div>
+  </div>
+
+  <div class="package">
+    <div class="package-left">
+      <h3>Mother and Daughter Photoshoot</h3>
+      <div class="package-meta">1 hr | £199</div>
+      <div class="package-desc">We offer special service to capture your emotions with your loved once. This package is designed specially for Mother and Daughter Photoshoot.</div>
+    </div>
+    <div class="package-right">
+      <a href="{% url 'core:booking' 'mother-daughter' %}" class="book-btn">BOOK</a>
+    </div>
+  </div>
+
+  <div class="package">
+    <div class="package-left">
+      <h3>Father & Son Photoshoot</h3>
+      <div class="package-meta">1 hr | £199</div>
+      <div class="package-desc">We offer special service to capture your moments with your loved once.</div>
+    </div>
+    <div class="package-right">
+      <a href="{% url 'core:booking' 'father-son' %}" class="book-btn">BOOK</a>
+    </div>
+  </div>
+
+  <div class="package">
+    <div class="package-left">
+      <h3>Corporate Photographes</h3>
+      <div class="package-meta">2 hrs | £275</div>
+      <div class="package-desc">This package is designed for Professional photography for Businesses.</div>
+    </div>
+    <div class="package-right">
+      <a href="{% url 'core:booking' 'corporate-photography' %}" class="book-btn">BOOK</a>
+    </div>
+  </div>
+
+  <div class="package">
+    <div class="package-left">
+      <h3>Corporate Adverts</h3>
+      <div class="package-meta">8 hrs | £575</div>
+      <div class="package-desc">Price includes upto 3 min professional adverts for tv and other medium. Producing short adverts and films for business, casting celebrities can lead to...
+        <span class="extra-desc"> increased brand awareness and professional media presence.</span>
+      </div>
+      <button class="more-btn" onclick="toggle(this)">+ More</button>
+    </div>
+    <div class="package-right">
+      <a href="{% url 'core:booking' 'corporate-adverts' %}" class="book-btn">BOOK</a>
+    </div>
+  </div>
+
+  <div class="package">
+    <div class="package-left">
+      <h3>Pet Photoshoot in Professional Studio</h3>
+      <div class="package-meta">1 hr | £199</div>
+      <div class="package-desc">Professional studio photoshoot for your beloved pets.</div>
+    </div>
+    <div class="package-right">
+      <a href="{% url 'core:booking' 'pet-photoshoot' %}" class="book-btn">BOOK</a>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<script>
+function toggle(btn) {
+  const extra = btn.previousElementSibling.querySelector('.extra-desc');
+  if (extra) {
+    if (extra.style.display === 'inline') {
+      extra.style.display = 'none';
+      btn.textContent = '+ More';
+    } else {
+      extra.style.display = 'inline';
+      btn.textContent = '- Less';
+    }
+  }
+}
+</script>
+
+{% endblock %}

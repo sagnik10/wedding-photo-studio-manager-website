@@ -1,0 +1,201 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+
+.portfolio-intro{
+max-width:1100px;
+margin:40px auto;
+display:flex;
+gap:60px;
+align-items:center;
+flex-wrap:wrap;
+}
+
+.portfolio-intro .left{
+flex:1;
+text-align:center;
+}
+
+.portfolio-intro .left img{
+max-width:220px;
+}
+
+.portfolio-intro .left p{
+margin-top:15px;
+font-size:16px;
+}
+
+.portfolio-intro .right{
+flex:1;
+font-size:16px;
+line-height:1.9;
+color:#555;
+}
+
+/* SLIDER */
+
+.slider-container{
+overflow:hidden;
+max-width:1200px;
+margin:40px auto 0;
+}
+
+.slider-track{
+display:flex;
+transition:transform 0.8s cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+.slide{
+min-width:100%;
+}
+
+.slide img{
+width:100%;
+height:450px;
+object-fit:cover;
+}
+
+/* THUMBNAILS */
+
+.thumbnails{
+display:flex;
+gap:10px;
+overflow-x:auto;
+margin:20px auto;
+padding:10px 0;
+max-width:1200px;
+}
+
+.thumbnails img{
+height:70px;
+cursor:pointer;
+opacity:0.6;
+transition:0.3s;
+}
+
+.thumbnails img.active{
+opacity:1;
+transform:scale(1.08);
+}
+
+/* TITLE */
+
+.section h2{
+text-align:center;
+margin-bottom:20px;
+}
+
+/* MOBILE */
+
+@media(max-width:900px){
+
+.slide img{
+height:300px;
+}
+
+.portfolio-intro{
+flex-direction:column;
+text-align:center;
+}
+
+}
+
+</style>
+
+
+<div class="section">
+
+<h2>Manchester Wedding Photographers</h2>
+
+<div class="portfolio-intro">
+
+<div class="left">
+<img src="/media/gallery/photos/Danarus_Logo.png">
+<p>Making moments unforgettable for you</p>
+</div>
+
+<div class="right">
+Danarus Photo Studio making moments unforgettable for you.We are one of the most popular manchester wedding photographers. our porfolio shoes our dedication to save our valued clients moments. We are classed as artistic studio portrait photographers in Manchester. portrait packages
+</div>
+
+</div>
+
+</div>
+
+
+<div class="section">
+
+<h2>Danarus Photo Studio making moments unforgettable for you</h2>
+
+<div class="slider-container">
+
+<div class="slider-track" id="sliderTrack">
+{% for photo in photos %}
+<div class="slide">
+<img src="/media/{{ photo }}">
+</div>
+{% endfor %}
+</div>
+
+</div>
+
+
+<div class="thumbnails" id="thumbContainer">
+{% for photo in photos %}
+<img src="/media/{{ photo }}" data-index="{{ forloop.counter0 }}">
+{% endfor %}
+</div>
+
+</div>
+
+
+<script>
+
+const track = document.getElementById("sliderTrack");
+const thumbs = document.querySelectorAll("#thumbContainer img");
+
+let currentIndex = 0;
+let interval;
+
+function updateSlider(){
+track.style.transform = `translateX(-${currentIndex * 100}%)`;
+
+thumbs.forEach(t => t.classList.remove("active"));
+thumbs[currentIndex].classList.add("active");
+}
+
+function nextSlide(){
+currentIndex++;
+if(currentIndex >= thumbs.length){
+currentIndex = 0;
+}
+updateSlider();
+}
+
+function startAuto(){
+interval = setInterval(nextSlide, 2000);
+}
+
+function stopAuto(){
+clearInterval(interval);
+}
+
+thumbs.forEach((img, index) => {
+img.addEventListener("click", () => {
+currentIndex = index;
+updateSlider();
+});
+img.addEventListener("mouseenter", stopAuto);
+img.addEventListener("mouseleave", startAuto);
+});
+
+document.querySelector(".slider-container").addEventListener("mouseenter", stopAuto);
+document.querySelector(".slider-container").addEventListener("mouseleave", startAuto);
+
+updateSlider();
+startAuto();
+
+</script>
+
+{% endblock %}

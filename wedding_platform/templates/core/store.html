@@ -1,0 +1,231 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+.store-wrapper{max-width:1200px;margin:60px auto;display:flex;gap:50px;padding:0 20px;}
+.store-sidebar{width:220px;}
+.store-sidebar a{display:block;margin-bottom:12px;text-decoration:none;color:#444;}
+.active{font-weight:bold;}
+
+.store-top{display:flex;justify-content:space-between;margin-bottom:40px;}
+
+.products{display:grid;grid-template-columns:repeat(3,1fr);gap:50px 35px;}
+
+.product{text-align:center;cursor:pointer;}
+
+.product-img{position:relative;background:#fafafa;padding:20px;}
+.product-img img{width:100%;height:260px;object-fit:cover;}
+
+.sale-badge{position:absolute;top:10px;right:10px;background:#ddd;padding:5px 10px;font-size:12px;}
+
+.quick-view{
+  position:absolute;
+  bottom:15px;
+  left:50%;
+  transform:translateX(-50%);
+  background:#eee;
+  padding:10px 20px;
+  font-size:13px;
+}
+
+.old-price{text-decoration:line-through;color:#888;margin-right:5px;}
+.new-price{color:red;}
+
+.modal{
+  position:fixed;
+  top:0;left:0;
+  width:100%;height:100%;
+  background:rgba(0,0,0,0.6);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:999;
+}
+
+.modal-content{
+  background:white;
+  width:85%;
+  max-width:900px;
+  padding:40px;
+  display:flex;
+  gap:40px;
+  position:relative;
+}
+
+.modal img{width:50%;}
+
+.close-btn{
+  position:absolute;
+  top:10px;
+  right:15px;
+  font-size:22px;
+  cursor:pointer;
+}
+
+.btn{
+  padding:12px 28px;
+  background:#c6bdbd;
+  color:#000;
+  text-decoration:none;
+  display:inline-block;
+  margin-right:10px;
+  letter-spacing:2px;
+  transition:0.2s;
+}
+
+.btn:hover{
+  background:#111;
+  color:#fff;
+}
+
+select,input{
+  width:100%;
+  padding:10px;
+  margin-bottom:15px;
+  border:1px solid #ddd;
+}
+</style>
+
+<div class="store-wrapper">
+
+  <div class="store-sidebar">
+    <h4>All Products</h4>
+
+    <a href="?" class="{% if not selected_category %}active{% endif %}">All Products</a>
+    <a href="?category=frame" class="{% if selected_category == 'frame' %}active{% endif %}">Collage Picture Frame</a>
+    <a href="?category=ring" class="{% if selected_category == 'ring' %}active{% endif %}">Wedding Rings</a>
+    <a href="?category=wall" class="{% if selected_category == 'wall' %}active{% endif %}">Wall Frames</a>
+  </div>
+
+  <div class="store-main">
+
+    <div class="store-top">
+      <h2>All Products</h2>
+
+      <select onchange="location = this.value;">
+        <option value="?" {% if not selected_sort %}selected{% endif %}>Most popular</option>
+        <option value="?sort=low" {% if selected_sort == 'low' %}selected{% endif %}>Price low to high</option>
+        <option value="?sort=high" {% if selected_sort == 'high' %}selected{% endif %}>Price high to low</option>
+      </select>
+    </div>
+
+    <div class="products">
+
+      {% for product in products %}
+      <div class="product"
+        onclick="openModal(
+          '{{ product.id }}',
+          '{{ product.image.url }}',
+          '{{ product.name|escapejs }}',
+          '{{ product.price }}',
+          '{{ product.description|escapejs }}'
+        )">
+
+        <div class="product-img">
+          {% if product.price < 10 %}
+          <div class="sale-badge">Sale</div>
+          {% endif %}
+
+          <img src="{{ product.image.url }}">
+          <div class="quick-view">+ Quick View</div>
+        </div>
+
+        <h3>{{ product.name }}</h3>
+
+        {% if product.price < 10 %}
+          <span class="old-price">£{{ product.price|add:"2.99" }}</span>
+          <span class="new-price">£{{ product.price }}</span>
+        {% else %}
+          <span>£{{ product.price }}</span>
+        {% endif %}
+      </div>
+      {% endfor %}
+
+    </div>
+
+  </div>
+
+</div>
+
+<div class="modal" id="productModal">
+  <div class="modal-content">
+
+    <span class="close-btn" onclick="closeModal()">×</span>
+
+    <img id="modalImg">
+
+    <div>
+      <h2 id="modalTitle"></h2>
+      <div id="modalPrice"></div>
+
+      <label>Size</label>
+      <select id="modalSizes"></select>
+
+      <label>Quantity</label>
+      <input type="number" id="modalQty" value="1" min="1">
+
+      <a id="buyNowBtn" class="btn">BUY NOW</a>
+      <a id="addCartBtn" class="btn">ADD TO CART</a>
+
+      <p id="modalDesc"></p>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function openModal(id, img, title, price, desc) {
+  document.getElementById("productModal").style.display = "flex";
+  document.body.style.overflow = "hidden";
+
+  document.getElementById("modalImg").src = img;
+  document.getElementById("modalTitle").innerText = title;
+  document.getElementById("modalPrice").innerText = "£" + price;
+  document.getElementById("modalDesc").innerText = desc;
+
+  let sizeOptions = "";
+
+  if (title.toLowerCase().includes("frame")) {
+    sizeOptions = `
+      <option>Medium 10 x 8</option>
+      <option>Small 5x7</option>
+      <option>Extra Large 12 x 10</option>
+      <option>Extra Small 4x6</option>
+    `;
+  } else if (title.toLowerCase().includes("ring")) {
+    sizeOptions = `
+      <option>Size 6</option>
+      <option>Size 7</option>
+      <option>Size 8</option>
+      <option>Size 9</option>
+    `;
+  } else {
+    sizeOptions = `<option>Standard</option>`;
+  }
+
+  document.getElementById("modalSizes").innerHTML = sizeOptions;
+
+  document.getElementById("buyNowBtn").onclick = function(){
+    let qty = document.getElementById("modalQty").value;
+    window.location.href = "/buy-now/" + id + "/?qty=" + qty;
+  };
+
+  document.getElementById("addCartBtn").onclick = function(){
+    let qty = document.getElementById("modalQty").value;
+    window.location.href = "/add-to-cart/" + id + "/?qty=" + qty;
+  };
+}
+
+function closeModal() {
+  document.getElementById("productModal").style.display = "none";
+  document.body.style.overflow = "auto";
+}
+
+document.getElementById("productModal").onclick = function(e){
+  if(e.target.id === "productModal"){
+    closeModal();
+  }
+}
+</script>
+
+{% endblock %}

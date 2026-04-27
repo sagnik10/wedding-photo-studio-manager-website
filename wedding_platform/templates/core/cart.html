@@ -1,0 +1,173 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+.cart-wrapper{
+  max-width:900px;
+  margin:60px auto;
+  padding:0 20px;
+}
+
+.cart-wrapper h2{
+  text-align:center;
+  margin-bottom:40px;
+  font-weight:500;
+}
+
+.cart-item{
+  display:flex;
+  align-items:center;
+  gap:20px;
+  padding:20px 0;
+  border-bottom:1px solid #eee;
+}
+
+.cart-item img{
+  width:100px;
+  height:100px;
+  object-fit:cover;
+}
+
+.cart-info{
+  flex:1;
+}
+
+.cart-info h3{
+  margin:0;
+  font-size:16px;
+  font-weight:500;
+}
+
+.cart-info p{
+  margin:5px 0;
+  color:#555;
+}
+
+.qty-box{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.qty-box input{
+  width:60px;
+  padding:6px;
+  text-align:center;
+  border:1px solid #ddd;
+}
+
+.total-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-top:30px;
+}
+
+.btn{
+  padding:12px 28px;
+  border:none;
+  cursor:pointer;
+  font-size:13px;
+  letter-spacing:1px;
+  background:#ddd;
+  color:#000;
+  transition:0.2s;
+}
+
+.btn:hover{
+  background:#111;
+  color:#fff;
+}
+
+.btn-dark{
+  background:#c6bdbd;
+  color:#000;
+  letter-spacing:2px;
+}
+
+.btn-dark:hover{
+  background:#111;
+  color:#fff;
+}
+
+.checkout-btn{
+  display:inline-block;
+  background:#c6bdbd;
+  color:#000;
+  padding:14px 30px;
+  text-decoration:none;
+  letter-spacing:2px;
+  transition:0.2s;
+}
+
+.checkout-btn:hover{
+  background:#111;
+  color:#fff;
+}
+
+.remove-link{
+  color:#c00;
+  font-size:13px;
+  text-decoration:none;
+}
+
+.remove-link:hover{
+  text-decoration:underline;
+}
+</style>
+
+<div class="cart-wrapper">
+
+<h2>Your Cart</h2>
+
+{% if items %}
+
+<form method="post" action="{% url 'core:update_cart' %}">
+{% csrf_token %}
+
+{% for item in items %}
+<div class="cart-item">
+
+{% if item.product.image %}
+<img src="{{ item.product.image.url }}">
+{% endif %}
+
+<div class="cart-info">
+<h3>{{ item.product.name }}</h3>
+<p>£{{ item.product.price }}</p>
+</div>
+
+<div class="qty-box">
+<label>Qty</label>
+<input type="number" name="quantity_{{ item.id }}" value="{{ item.quantity }}" min="1">
+</div>
+
+<div style="width:120px;text-align:right;">
+£{{ item.total_price }}
+</div>
+
+<a href="{% url 'core:remove_item' item.id %}" class="remove-link">Remove</a>
+
+</div>
+{% endfor %}
+
+<div class="total-row">
+<button type="submit" class="btn btn-dark">UPDATE CART</button>
+<h3>Total: £{{ total }}</h3>
+</div>
+
+</form>
+
+<div style="text-align:right;margin-top:20px;">
+<a href="{% url 'core:checkout' %}" class="checkout-btn">PROCEED TO CHECKOUT</a>
+</div>
+
+{% else %}
+
+<p style="text-align:center">Your cart is empty</p>
+
+{% endif %}
+
+</div>
+
+{% endblock %}

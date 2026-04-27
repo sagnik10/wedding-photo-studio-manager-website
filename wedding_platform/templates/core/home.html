@@ -1,0 +1,380 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="hero">
+{% if hero %}
+<img src="{{ hero.image.url }}">
+{% else %}
+<img src="/media/{{ photos.0 }}">
+{% endif %}
+<div class="hero-content">
+<a href="{% url 'core:booking' 'wedding' %}">Get A Quote</a>
+</div>
+</div>
+
+<div id="chat-toggle" onclick="toggleChat()">💬</div>
+
+<div id="chatbot">
+  <div id="chat-header">
+    <span>Danarus Artistic Wedding Photo Studio</span>
+    <span onclick="toggleChat()" style="cursor:pointer;">✕</span>
+  </div>
+  <div id="chat-body"></div>
+  <div id="options-bar"></div>
+  <div id="chat-input">
+    <input type="text" id="user-input" placeholder="Type here...">
+    <button onclick="sendMessage()">Send</button>
+  </div>
+</div>
+
+<style>
+#chat-toggle {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: linear-gradient(135deg, #000, #444);
+  color: white;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+  transition: transform 0.2s ease;
+}
+#chat-toggle:hover {
+  transform: scale(1.08);
+}
+#chatbot {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  width: 300px;
+  height: 420px;
+  background: #ffffff;
+  border-radius: 18px;
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 25px 60px rgba(0,0,0,0.35);
+  font-family: system-ui;
+  backdrop-filter: blur(10px);
+}
+#chat-header {
+  background: linear-gradient(135deg, #000, #333);
+  color: #fff;
+  padding: 12px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  letter-spacing: 0.3px;
+}
+#chat-body {
+  flex: 1;
+  padding: 12px;
+  overflow-y: auto;
+  background: linear-gradient(to bottom, #f9f9f9, #f1f1f1);
+}
+.message {
+  margin: 6px 0;
+  padding: 8px 12px;
+  border-radius: 14px;
+  max-width: 75%;
+  font-size: 13px;
+  line-height: 1.4;
+}
+.user {
+  background: linear-gradient(135deg, #000, #222);
+  color: #fff;
+  margin-left: auto;
+  border-bottom-right-radius: 4px;
+}
+.bot {
+  background: #e6e6e6;
+  color: #000;
+  border-bottom-left-radius: 4px;
+}
+#options-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  padding: 8px;
+  border-top: 1px solid #eee;
+  background: #fff;
+}
+.option-btn {
+  padding: 5px 9px;
+  border-radius: 16px;
+  background: #000;
+  color: #fff;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.option-btn:hover {
+  background: #333;
+}
+#chat-input {
+  display: flex;
+  border-top: 1px solid #eee;
+  background: #fff;
+}
+#chat-input input {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  outline: none;
+  font-size: 13px;
+}
+#chat-input button {
+  background: linear-gradient(135deg, #000, #333);
+  color: white;
+  border: none;
+  padding: 10px 14px;
+  font-size: 13px;
+  cursor: pointer;
+}
+.date-picker {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+</style>
+
+<script>
+let step = 0;
+let data = {};
+
+function toggleChat() {
+  const chat = document.getElementById("chatbot");
+  chat.style.display = chat.style.display === "flex" ? "none" : "flex";
+}
+
+function addMessage(text, sender) {
+  const div = document.createElement("div");
+  div.className = "message " + sender;
+  div.innerText = text;
+  document.getElementById("chat-body").appendChild(div);
+  div.scrollIntoView();
+}
+
+function setOptions(options) {
+  const bar = document.getElementById("options-bar");
+  bar.innerHTML = "";
+  options.forEach(opt => {
+    const btn = document.createElement("div");
+    btn.className = "option-btn";
+    btn.innerText = opt;
+    btn.onclick = () => {
+      addMessage(opt, "user");
+      handleBot(opt);
+    };
+    bar.appendChild(btn);
+  });
+}
+
+function clearOptions() {
+  document.getElementById("options-bar").innerHTML = "";
+}
+
+function sendMessage() {
+  const input = document.getElementById("user-input");
+  const text = input.value;
+  if (!text) return;
+  addMessage(text, "user");
+  input.value = "";
+  handleBot(text);
+}
+
+function getCookie(name) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== "") {
+    const cookies = document.cookie.split(";");
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      if (cookie.substring(0, name.length + 1) === (name + "=")) {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
+    }
+  }
+  return cookieValue;
+}
+
+function handleBot(input) {
+  setTimeout(() => {
+
+    if (step === 0) {
+      addMessage("Hi 👋 What's your name?", "bot");
+      step++;
+    }
+
+    else if (step === 1) {
+      data.name = input;
+      addMessage("What's your phone number?", "bot");
+      clearOptions();
+      step++;
+    }
+
+    else if (step === 2) {
+      data.phone = input;
+      addMessage("Select your event date:", "bot");
+      clearOptions();
+      const picker = document.createElement("input");
+      picker.type = "date";
+      picker.className = "date-picker";
+      picker.onchange = () => {
+        addMessage(picker.value, "user");
+        handleBot(picker.value);
+      };
+      document.getElementById("options-bar").appendChild(picker);
+      step++;
+    }
+
+    else if (step === 3) {
+      data.date = input;
+      addMessage("Perfect 👍 We'll contact you shortly!", "bot");
+      clearOptions();
+
+      fetch("/chatbot-lead/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": getCookie("csrftoken")
+        },
+        body: JSON.stringify(data)
+      });
+
+      step = 0;
+    }
+
+  }, 300);
+}
+
+window.onload = function() {
+  toggleChat();
+  addMessage("Hi! Welcome to Danarus Artistic Wedding Photo Studio 👋", "bot");
+};
+</script>
+
+<div class="section">
+<h2>our mission</h2>
+
+<div class="mission-grid">
+<div class="mission-image">
+<img src="/media/{{ photos.1 }}">
+</div>
+
+<div class="mission-text">
+<h4>Our Mission</h4>
+<p>
+At Danarus Productions, we strive to capture the essence of every moment through our lens. Our mission is to provide stunning photography that tells your unique story, whether it's a wedding, family portrait, or corporate event. manchester wedding photographers professional wedding photographer low price wedding photographer
+</p>
+</div>
+
+</div>
+
+</div>
+
+<div class="section">
+
+<h2>Our Story</h2>
+
+<img src="/media/{{ photos.2 }}" style="width:70%;margin:40px auto;display:block;">
+
+<div class="story">
+
+<p>
+Danarus Productions is a UK-based advertising and Modeling agency specializing in model portfolios, wedding photography, and commercials for small businesses. We understand that finding affordable and reliable photographers, especially for wedding photography and studio portraits, can be a challenge. However, we can help you find the right way to cover your event, as our professional photographers for your big day are fully trained to capture moments that make your event unforgettable. We know that while searching for photographers in your local area and checking their portfolios, you like to make sure they meet your needs. Our services are valued highly among our clients because we offer state-of-the-Art tailor made professional Photography services. Additionally, our photography studios based in Manchester, UK offers full consultation and support for Models looking to start their career as a Professional Paid Model. Finding a studio portrait photographer who is affordable might be very difficult. We are here to offer very affordable services to help bring your dream of being a star to life. If you need a passport photographer, we offer this service in our studio in Manchester. We understand that finding an affordable and reliable wedding photographer can be a challenge, especially for last-minute bookings. We appreciate your concerns about professional wedding photography services. This is where we offer an affordable price you can consider for your event.
+</p>
+
+<p>
+It's great to consider that our options are available for those who are on a budget. Hope that our services can help those who need a last-minute wedding photographer, or searching for Manchester wedding photographers at an affordable cost. Unlike other cheap wedding photographers in Manchester, our work shows artistic and stylish approach to make us a professional wedding photographer in Manchester, or you can consider us a low price wedding photographer in Manchester as compared to other top wedding photographers in Manchester.
+</p>
+
+</div>
+
+</div>
+
+<div class="section">
+
+<div class="two-col">
+
+<div>
+<img src="/media/{{ photos.3 }}">
+<h4>Our Services</h4>
+<p>
+We offer a variety of services as an affordable photographer in Manchester in comparison to all those cheap wedding photographers asking you to pay a high price for service which we offer at a very low and affordable price to meet your needs. This may include a family portrait photographer in Manchester or a wedding photographer in Manchester, including event photographers in Manchester, and commercial photography packages offered by others. Our team works closely with your needs and budget to understand your vision and bring it to life through our lens. We are committed to providing high-quality images that capture the essence of your special moments. Manchester wedding photographers, professional wedding photographer, low price wedding photographer
+</p>
+</div>
+
+<div>
+<img src="/media/{{ photos.4 }}">
+<h4>Our Process</h4>
+<p>
+At Danarus Productions, we believe that every photoshoot is unique and deserves a personalized approach. We work closely with our clients to understand their needs and preferences, while they look for Manchester wedding Photographers or studio portrait Photographers in Manchester, and we use our expertise to create a customized plan for each shoot. From selecting the perfect location to editing the final product, we are dedicated to providing a seamless and enjoyable experience. Manchester wedding photographers, professional wedding photographer, low price wedding photographer. We are committed to providing high-quality images that capture the essence of your special moments. Manchester wedding photographers, professional wedding photographer, low price wedding photographer.
+</p>
+</div>
+
+</div>
+
+</div>
+
+<div class="section">
+
+<h2>making moments unforgettable for you</h2>
+
+<div class="gallery">
+{% for photo in photos %}
+  {% if "new" in photo %}
+    <img src="/media/{{ photo }}">
+  {% endif %}
+{% endfor %}
+</div>
+
+</div>
+
+<div class="section">
+
+<h2>My Blog</h2>
+
+<div class="blog">
+
+{% for photo in photos %}
+  {% if "blog_" in photo %}
+
+    <div class="blog-row">
+      <img src="/media/{{ photo }}">
+      <div>
+
+        {% if "blog_1" in photo %}
+          <p>26 December 2025 | Asian Wedding Photographer, Asian Wedding photographers in</p>
+          <h3>Mastering Wedding Photography: Tips and Trends for 2025</h3>
+
+        {% elif "blog_2" in photo %}
+          <p>25 December 2025 | Asian Wedding Photographer, Asian Wedding photographers in</p>
+          <h3>Sikh Wedding Photography in Manchester Asian Wedding Photographers</h3>
+
+        {% elif "blog_3" in photo %}
+          <p>3 April 2025 | Asian Wedding Photographer, Asian Wedding photographers in</p>
+          <h3>Asian Wedding Photography in Manchester</h3>
+
+        {% endif %}
+
+      </div>
+    </div>
+
+  {% endif %}
+{% endfor %}
+
+</div>
+
+</div>
+
+{% endblock %}

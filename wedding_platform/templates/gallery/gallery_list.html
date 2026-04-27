@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="max-w-7xl mx-auto py-16 px-4">
+
+<h2 class="text-4xl text-center mb-12">Portfolio</h2>
+
+<div class="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4">
+
+{% for photo in photos %}
+
+<div class="break-inside-avoid cursor-pointer">
+
+<img src="{{ photo.image.url }}"
+class="w-full rounded-lg shadow hover:scale-[1.02] transition">
+
+</div>
+
+{% endfor %}
+
+</div>
+
+</div>
+
+{% endblock %}
